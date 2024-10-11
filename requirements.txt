@@ -1,0 +1,12 @@
+streamlit
+opencv-python
+PyPDF2
+altair
+setuptools
+transformers
+tensorflow
+fitz
+torch>=2.2.0
+numpy
+PyMuPDF
+sentencepiece
