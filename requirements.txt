@@ -12,4 +12,4 @@ torch>=2.2.0
 numpy
 PyMuPDF
 sentencepiece
-keras
+keras==2.14.0
