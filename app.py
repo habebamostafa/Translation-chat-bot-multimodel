@@ -6,7 +6,6 @@ from PIL import Image
 import PyPDF2
 import fitz
 import os
-from tensorflow.keras import layers, models
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
 import torch
