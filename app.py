@@ -52,7 +52,7 @@ def image_to_text(image, model):
     input_image_rgb = np.repeat(input_image, 3, axis=-1)  # Shape becomes (1, 32, 32, 3)
 
     prediction = model.predict(input_image_rgb)
-    return "Extracted Text from Image"
+    return prediction
 
 predefined_images = {
     "Sample Image 1": "/workspaces/Translation-chat-bot/Screenshot 2024-10-06 161450.png",
@@ -172,14 +172,15 @@ elif option == "Image to Text":
 
             if st.button("Extract Text"):
                 extracted_text = image_to_text(image, image_to_text_model)
-                st.write("Extracted Text:", extracted_text)
+                st.write("Extracted Text: ", extracted_text)
 
     elif upload_option == "Try Sample Image":
         selected_image = st.selectbox("Select a sample image", list(predefined_images.keys()))
+        image_path = predefined_images[selected_image]
+        image = Image.open(image_path)
+        st.image(image, caption="Sample Image", use_column_width=True)
+
         if st.button("Extract Text"):
-            image_path = predefined_images[selected_image]
-            image = Image.open(image_path)
-            st.image(image, caption="Sample Image", use_column_width=True)
             extracted_text = image_to_text(image, image_to_text_model)
             st.write("Extracted Text:", extracted_text)
 
