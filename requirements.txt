@@ -7,7 +7,6 @@ altair
 setuptools
 transformers
 tensorflow==2.16.2
-fitz
 torch>=2.2.0
 numpy
 PyMuPDF
