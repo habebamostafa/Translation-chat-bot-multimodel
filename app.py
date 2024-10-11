@@ -171,7 +171,7 @@ elif option == "Image to Text":
             st.image(image, caption="Uploaded Image", use_column_width=True)
 
             if st.button("Extract Text"):
-                extracted_text = image_to_text(image, image_to_text_model)
+                extracted_text = extract(image)
                 st.write("Extracted Text: ", extracted_text)
 
     elif upload_option == "Try Sample Image":
@@ -179,9 +179,8 @@ elif option == "Image to Text":
         image_path = predefined_images[selected_image]
         image = Image.open(image_path)
         st.image(image, caption="Sample Image", use_column_width=True)
-
         if st.button("Extract Text"):
-            extracted_text = image_to_text(image, image_to_text_model)
+            extracted_text = extract(image)
             st.write("Extracted Text:", extracted_text)
 
 elif option == "PDF Translation":
