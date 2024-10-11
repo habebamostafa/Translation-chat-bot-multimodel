@@ -162,7 +162,7 @@ elif option == "Chat":
         st.session_state.chat_history = []
 
 elif option == "Image to Text":
-    upload_option = st.radio("Choose Input Method", ("Upload Image", "Try Sample Image"))
+    upload_option = st.radio("Choose Input Method", ("Try Sample Image","Upload Image"))
 
     if upload_option == "Upload Image":
         uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
