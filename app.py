@@ -3,13 +3,13 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from PIL import Image
-import PyPDF2
 import fitz
 import os
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
 import torch
 import sentencepiece as spm
+import azure.cognitiveservices.speech as speechsdk
 
 # Initialize session state for chat history if not already done
 if 'chat_history' not in st.session_state:
@@ -40,6 +40,31 @@ def translate_sentence(english_sentence):
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
     return translated
+    
+# Function to perform speech recognition using Azure's Speech API
+def recognize_speech_from_microphone():
+    # Set up the speech recognizer configuration
+    speech_key ="5c57af6ff6ba4da79489bf794d7ce3c9"
+    service_region ="eastus" 
+    speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+
+    print("Say something...")
+
+    # Perform speech recognition
+    result = speech_recognizer.recognize_once()
+
+    # Check if the recognition was successful
+    if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+        print(f"Recognized: {result.text}")
+        return result.text
+    elif result.reason == speechsdk.ResultReason.NoMatch:
+        print("No speech could be recognized.")
+        return "No speech recognized."
+    elif result.reason == speechsdk.ResultReason.Canceled:
+        cancellation_details = result.cancellation_details
+        print(f"Speech Recognition canceled: {cancellation_details.reason}")
+        return "Speech recognition canceled."
 
 def image_to_text(image, model):
     gray_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
@@ -54,8 +79,8 @@ def image_to_text(image, model):
     return prediction
 
 predefined_images = {
-    "Sample Image 1": "/workspaces/Translation-chat-bot/Screenshot 2024-10-06 161450.png",
-    "Sample Image 2": "/workspaces/Translation-chat-bot/Screenshot 2024-10-06 161505.png",
+    "Sample Image 1": "Screenshot 2024-10-06 161450.png",
+    "Sample Image 2": "Screenshot 2024-10-06 161505.png",
 }
 
 mapping_inverse = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F', 16: 'G', 17: 'H', 18: 'I', 19: 'J', 20: 'K', 21: 'L', 22: 'M', 23: 'N', 24: 'O', 25: 'P', 26: 'Q', 27: 'R', 28: 'S', 29: 'T', 30: 'U', 31: 'V', 32: 'W', 33: 'X', 34: 'Y', 35: 'Z', 36: 'a', 37: 'b', 38: 'c', 39: 'd', 40: 'e', 41: 'f', 42: 'g', 43: 'h', 44: 'i', 45: 'j', 46: 'k', 47: 'l', 48: 'm', 49: 'n', 50: 'o', 51: 'p', 52: 'q', 53: 'r', 54: 's', 55: 't', 56: 'u', 57: 'v', 58: 'w', 59: 'x', 60: 'y', 61: 'z'}
@@ -132,7 +157,7 @@ image_to_text_model = load_image_to_text_model()
 # Streamlit interface
 st.title("Multimodal Translation and Chatbot App")
 
-option = st.selectbox("Choose Input Type", ["Text Translation", "Chat", "Image to Text", "PDF Translation"])
+option = st.selectbox("Choose Input Type", ["Text Translation","Speech to Text","Chat", "Image to Text", "PDF Translation"])
 
 if option == "Text Translation":
     input_text = st.text_input("Enter text for translation")
@@ -193,3 +218,13 @@ elif option == "PDF Translation":
             translated_pdf_text = translate_sentence(pdf_text)
             st.write("Translated PDF Text:")
             st.write(translated_pdf_text)
+elif option == "Speech to Text":
+    if st.button("Record and Recognize Speech"):
+        # Call the Azure Speech API to recognize speech
+        recognized_text = recognize_speech_from_microphone()
+        st.write("Recognized Speech:", recognized_text)
+
+        # Now, translate the recognized speech using your model
+        if recognized_text != "No speech recognized." and recognized_text != "Speech recognition canceled.":
+            translated_text = translate_sentence(recognized_text)
+            st.write("Translated Text:", translated_text)
