@@ -39,7 +39,11 @@ def translate_sentence(english_sentence):
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
     return translated
+<<<<<<< HEAD
  
+=======
+    
+>>>>>>> 98f8cac636aa7b82b859066390ba3d42726861ed
 def image_to_text(image, model):
     gray_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
     resized_image = cv2.resize(gray_image, (32, 32)) / 255.0
