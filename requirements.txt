@@ -6,6 +6,6 @@ transformers
 tensorflow==2.16.2
 torch>=2.2.0
 numpy
-PyMuPDF==1.19.6
+PyMuPDF==24.0
 sentencepiece
 keras>=3.0.0
