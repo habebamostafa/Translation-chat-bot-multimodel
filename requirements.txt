@@ -2,9 +2,6 @@ streamlit
 opencv-python
 opencv-python-headless
 opencv-contrib-python
-PyPDF2
-altair
-setuptools
 transformers
 tensorflow==2.16.2
 torch>=2.2.0
@@ -12,4 +9,3 @@ numpy
 PyMuPDF==1.19.6
 sentencepiece
 keras>=3.0.0
-tf-keras
