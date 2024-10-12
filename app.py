@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from PIL import Image
-import PyPDF2
 import fitz
 import os
 from tensorflow.keras import layers, models
