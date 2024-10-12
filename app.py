@@ -5,7 +5,6 @@ import tensorflow as tf
 from PIL import Image
 import fitz
 import os
-from tensorflow.keras import layers, models
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
 import torch
