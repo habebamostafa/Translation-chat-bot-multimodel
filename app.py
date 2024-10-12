@@ -10,6 +10,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
 import torch
 import sentencepiece as spm
+import azure.cognitiveservices.speech as speechsdk
 
 # Initialize session state for chat history if not already done
 if 'chat_history' not in st.session_state:
@@ -40,6 +41,31 @@ def translate_sentence(english_sentence):
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
     return translated
+    
+# Function to perform speech recognition using Azure's Speech API
+def recognize_speech_from_microphone():
+    # Set up the speech recognizer configuration
+    speech_key ="5c57af6ff6ba4da79489bf794d7ce3c9"
+    service_region ="eastus" 
+    speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+
+    print("Say something...")
+
+    # Perform speech recognition
+    result = speech_recognizer.recognize_once()
+
+    # Check if the recognition was successful
+    if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+        print(f"Recognized: {result.text}")
+        return result.text
+    elif result.reason == speechsdk.ResultReason.NoMatch:
+        print("No speech could be recognized.")
+        return "No speech recognized."
+    elif result.reason == speechsdk.ResultReason.Canceled:
+        cancellation_details = result.cancellation_details
+        print(f"Speech Recognition canceled: {cancellation_details.reason}")
+        return "Speech recognition canceled."
 
 def image_to_text(image, model):
     gray_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
@@ -132,7 +158,7 @@ image_to_text_model = load_image_to_text_model()
 # Streamlit interface
 st.title("Multimodal Translation and Chatbot App")
 
-option = st.selectbox("Choose Input Type", ["Text Translation", "Chat", "Image to Text", "PDF Translation"])
+option = st.selectbox("Choose Input Type", ["Text Translation","Speech to Text","Chat", "Image to Text", "PDF Translation"])
 
 if option == "Text Translation":
     input_text = st.text_input("Enter text for translation")
@@ -193,3 +219,13 @@ elif option == "PDF Translation":
             translated_pdf_text = translate_sentence(pdf_text)
             st.write("Translated PDF Text:")
             st.write(translated_pdf_text)
+elif option == "Speech to Text":
+    if st.button("Record and Recognize Speech"):
+        # Call the Azure Speech API to recognize speech
+        recognized_text = recognize_speech_from_microphone()
+        st.write("Recognized Speech:", recognized_text)
+
+        # Now, translate the recognized speech using your model
+        if recognized_text != "No speech recognized." and recognized_text != "Speech recognition canceled.":
+            translated_text = translate_sentence(recognized_text)
+            st.write("Translated Text:", translated_text)
