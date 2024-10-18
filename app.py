@@ -9,6 +9,11 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
 import torch
 import sentencepiece as spm
+from dotenv import load_dotenv
+load_dotenv()
+
+# Access the API key
+api_key = os.getenv('API_KEY')
 
 # Initialize session state for chat history if not already done
 if 'chat_history' not in st.session_state:
