@@ -2,12 +2,9 @@ streamlit
 opencv-python
 opencv-python-headless
 opencv-contrib-python
-<<<<<<< HEAD
 PyPDF2
 altair
 setuptools
-=======
->>>>>>> 3f6e27872e2f97958c41d5d3ce373281764298b8
 transformers
 tensorflow==2.16.2
 torch>=2.2.0
@@ -16,4 +13,4 @@ PyMuPDF==1.24.0
 sentencepiece
 keras>=3.0.0
 tf-keras
-azure-cognitiveservices-speech
+python-dotenv
