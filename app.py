@@ -14,6 +14,37 @@ load_dotenv()
 
 # Access the API key
 api_key = os.getenv('API_KEY')
+AZURE_OPENAI_ENDPOINT = "https://chatbottservice.openai.azure.com/"  # Your Azure OpenAI endpoint
+MODEL_NAME = "gpt-35-turbo"  # Replace with your model name
+
+
+# Function to interact with Azure OpenAI service
+def ask_openai(prompt):
+    headers = {
+        "Content-Type": "application/json",
+        "api-key": AZURE_OPENAI_KEY,
+    }
+    
+    data = {
+        "messages": [{"role": "system", "content": prompt}],
+        "max_tokens": 50,
+        "temperature": 0.7,
+        "model": MODEL_NAME,  # Your model name
+    }
+    json_data = json.dumps(data)
+
+    try:
+        # Send the POST request with the JSON data
+        response = requests.post(
+            "https://chatbottservice.openai.azure.com/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-08-01-preview",
+            headers=headers,
+            data=json_data  # Use 'data' instead of 'json' to allow Content-Length
+        )
+        response.raise_for_status()  # Raise an error for bad responses
+        return response.json()['choices'][0]['message']['content']
+    except requests.exceptions.HTTPError as e:
+        return f"Error: {e.response.status_code} - {e.response.text}"
+
 
 # Initialize session state for chat history if not already done
 if 'chat_history' not in st.session_state:
@@ -145,24 +176,15 @@ if option == "Text Translation":
         st.write("Translated Text:", translated)
 
 elif option == "Chat":
-    input_text = st.text_input("Ask a question to the chatbot")
+    user_input = st.text_input("You:", "")
 
     if st.button("Chat"):
-        prompt = f"Answer the following question:\n{input_text}\nAnswer:"
-        input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(instruct_model.device)
-
-        instruct_model_outputs = instruct_model.generate(input_ids=input_ids, generation_config=GenerationConfig(max_new_tokens=22, num_beams=1))
-        instruct_model_text_output = tokenizer.decode(instruct_model_outputs[0], skip_special_tokens=True)
-
-        st.session_state.chat_history.append(("User", input_text))
-        st.session_state.chat_history.append(("Instruct Model", instruct_model_text_output))
-
-    st.write("### Chat History")
-    for speaker, message in st.session_state.chat_history:
-        st.write(f"**{speaker}:** {message}")
-
-    if st.button("Reset Chat History"):
-        st.session_state.chat_history = []
+        if user_input:
+            try:
+                bot_response = ask_openai(user_input)
+                st.text(f"Bot: {bot_response}")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
 
 elif option == "Image to Text":
     upload_option = st.radio("Choose Input Method", ("Try Sample Image","Upload Image"))
