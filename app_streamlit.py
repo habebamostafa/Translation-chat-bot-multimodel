@@ -28,7 +28,7 @@ def read_pdf(file):
     return text
 
 def load_image_to_text_model():
-    return keras.models.load_model('cnn_model.h5')
+    return tf.keras.models.load_model('cnn_model.h5', compile=False)
 
 def load_translation_model():
     return tf.keras.models.load_model('model')
@@ -158,6 +158,7 @@ def extract(image):
     return ''.join(chars)
 
 image_to_text_model = load_image_to_text_model()
+image_to_text_model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
 
 # Streamlit interface
 st.title("Multimodal Translation and Chatbot App")
