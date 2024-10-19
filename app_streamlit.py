@@ -18,6 +18,27 @@ import json
 import requests
 import logging
 logging.basicConfig(level=logging.DEBUG)
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+
+# Load the T5 tokenizer and model
+model_name = "t5-base"  # or "t5-base" or "t5-large" for larger models
+tokenizer = T5Tokenizer.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
+def chat_with_t5(input_text):
+    # Prepare the input text
+    input_ids = tokenizer.encode(f"translate English to French: {input_text}", return_tensors="pt")
+
+    # Move input to GPU if available
+    if torch.cuda.is_available():
+        input_ids = input_ids.to('cuda')
+
+    # Generate a response from the model
+    with torch.no_grad():
+        output_ids = model.generate(input_ids, max_length=50, num_beams=5, early_stopping=True)
+
+    # Decode the generated response
+    response = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+    return response
 
 K.clear_session()
 
@@ -186,7 +207,7 @@ elif option == "Chat":
     if st.button("Chat"):
         if user_input:
             try:
-                bot_response = ask_openai(user_input)
+                bot_response = chat_with_t5(user_input)
                 st.text(f"Bot: {bot_response}")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
