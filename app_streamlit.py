@@ -43,7 +43,7 @@ def load_translation_model():
 
 
 def translate_sentence(english_sentence):
-    model = pipeline("translation_en_to_ar", model='model')
+    model = pipeline("translation_en_to_ar", model='Helsinki-NLP/opus-mt-en-ar')
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
     return translated
