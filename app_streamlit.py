@@ -12,39 +12,6 @@ import sentencepiece as spm
 from dotenv import load_dotenv
 load_dotenv()
 
-# Access the API key
-api_key = os.getenv('API_KEY')
-AZURE_OPENAI_ENDPOINT = "https://chatbottservice.openai.azure.com/"  # Your Azure OpenAI endpoint
-MODEL_NAME = "gpt-35-turbo"  # Replace with your model name
-
-
-# Function to interact with Azure OpenAI service
-def ask_openai(prompt):
-    headers = {
-        "Content-Type": "application/json",
-        "api-key": AZURE_OPENAI_KEY,
-    }
-    
-    data = {
-        "messages": [{"role": "system", "content": prompt}],
-        "max_tokens": 50,
-        "temperature": 0.7,
-        "model": MODEL_NAME,  # Your model name
-    }
-    json_data = json.dumps(data)
-
-    try:
-        # Send the POST request with the JSON data
-        response = requests.post(
-            "https://chatbottservice.openai.azure.com/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-08-01-preview",
-            headers=headers,
-            data=json_data  # Use 'data' instead of 'json' to allow Content-Length
-        )
-        response.raise_for_status()  # Raise an error for bad responses
-        return response.json()['choices'][0]['message']['content']
-    except requests.exceptions.HTTPError as e:
-        return f"Error: {e.response.status_code} - {e.response.text}"
-
 
 # Initialize session state for chat history if not already done
 if 'chat_history' not in st.session_state:
@@ -94,6 +61,36 @@ predefined_images = {
 }
 
 mapping_inverse = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F', 16: 'G', 17: 'H', 18: 'I', 19: 'J', 20: 'K', 21: 'L', 22: 'M', 23: 'N', 24: 'O', 25: 'P', 26: 'Q', 27: 'R', 28: 'S', 29: 'T', 30: 'U', 31: 'V', 32: 'W', 33: 'X', 34: 'Y', 35: 'Z', 36: 'a', 37: 'b', 38: 'c', 39: 'd', 40: 'e', 41: 'f', 42: 'g', 43: 'h', 44: 'i', 45: 'j', 46: 'k', 47: 'l', 48: 'm', 49: 'n', 50: 'o', 51: 'p', 52: 'q', 53: 'r', 54: 's', 55: 't', 56: 'u', 57: 'v', 58: 'w', 59: 'x', 60: 'y', 61: 'z'}
+api_key = os.getenv('API_KEY')
+AZURE_OPENAI_ENDPOINT = "https://chatbottservice.openai.azure.com/"
+MODEL_NAME = "gpt-35-turbo" 
+
+def ask_openai(prompt):
+    headers = {
+        "Content-Type": "application/json",
+        "api-key": AZURE_OPENAI_KEY,
+    }
+    
+    data = {
+        "messages": [{"role": "system", "content": prompt}],
+        "max_tokens": 50,
+        "temperature": 0.7,
+        "model": MODEL_NAME,  # Your model name
+    }
+    json_data = json.dumps(data)
+
+    try:
+        # Send the POST request with the JSON data
+        response = requests.post(
+            "https://chatbottservice.openai.azure.com/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-08-01-preview",
+            headers=headers,
+            data=json_data  # Use 'data' instead of 'json' to allow Content-Length
+        )
+        response.raise_for_status()  # Raise an error for bad responses
+        return response.json()['choices'][0]['message']['content']
+    except requests.exceptions.HTTPError as e:
+        return f"Error: {e.response.status_code} - {e.response.text}"
+
 
 def convert_2_gray(image):
     image_np = np.array(image)
