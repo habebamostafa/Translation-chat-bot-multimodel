@@ -166,7 +166,7 @@ def extract(image):
     return ''.join(chars)
 
 image_to_text_model = load_image_to_text_model()
-image_to_text_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+image_to_text_model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 # Streamlit interface
 st.title("Multimodal Translation and Chatbot App")
 
