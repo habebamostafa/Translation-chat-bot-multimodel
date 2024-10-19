@@ -14,3 +14,4 @@ sentencepiece
 keras>=3.0.0
 tf-keras
 python-dotenv
+Pillow
