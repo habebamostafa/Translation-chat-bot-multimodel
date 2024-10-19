@@ -29,7 +29,7 @@ def read_pdf(file):
 def load_image_to_text_model():
     try:
         model_path = os.path.join(os.path.dirname(__file__), 'cnn_model.h5')
-        return tf.keras.models.load_model(model_path, custom_objects={'CustomLayer': CustomLayer})
+        return tf.keras.models.load_model(model_path)
     except OSError as e:
         st.error(f"Error loading model: {e}")
         return None
