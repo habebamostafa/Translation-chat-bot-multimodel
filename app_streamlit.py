@@ -29,7 +29,7 @@ def read_pdf(file):
 def load_image_to_text_model():
     try:
         model_path = os.path.join(os.path.dirname(__file__), 'cnn_model.h5')
-        model = tf.keras.models.load_model(model_path, custom_objects={})
+        model = tf.keras.models.load_model(model_path, custom_objects={'CustomLayer': CustomLayer})
         if model is None:
             raise ValueError("Loaded model is None")
         return model
@@ -40,6 +40,19 @@ def load_image_to_text_model():
         st.error(f"Error: {ve}")
         return None
 
+import tensorflow as tf
+
+class CustomLayer(tf.keras.layers.Layer):
+    def __init__(self, units=32):
+        super(CustomLayer, self).__init__()
+        self.units = units
+
+    def build(self, input_shape):
+        self.w = self.add_weight(shape=(input_shape[-1], self.units), initializer='random_normal', trainable=True)
+        self.b = self.add_weight(shape=(self.units,), initializer='zeros', trainable=True)
+
+    def call(self, inputs):
+        return tf.matmul(inputs, self.w) + self.b
 
 
 def load_translation_model():
