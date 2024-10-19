@@ -27,44 +27,18 @@ def read_pdf(file):
     return text
 
 def load_image_to_text_model():
-    try:
-        model_path = os.path.join(os.path.dirname(__file__), 'cnn_model.h5')
-        model = tf.keras.models.load_model(model_path, custom_objects={'CustomLayer': CustomLayer})
-        if model is None:
-            raise ValueError("Loaded model is None")
-        return model
-    except OSError as e:
-        st.error(f"Error loading model: {e}")
-        return None
-    except ValueError as ve:
-        st.error(f"Error: {ve}")
-        return None
-
-import tensorflow as tf
-
-class CustomLayer(tf.keras.layers.Layer):
-    def __init__(self, units=32):
-        super(CustomLayer, self).__init__()
-        self.units = units
-
-    def build(self, input_shape):
-        self.w = self.add_weight(shape=(input_shape[-1], self.units), initializer='random_normal', trainable=True)
-        self.b = self.add_weight(shape=(self.units,), initializer='zeros', trainable=True)
-
-    def call(self, inputs):
-        return tf.matmul(inputs, self.w) + self.b
-
+    return tf.keras.models.load_model('cnn_model.h5')
 
 def load_translation_model():
     return tf.keras.models.load_model('model')
 
 
 def translate_sentence(english_sentence):
-    model_path = os.path.join(os.path.dirname(__file__), 'model')
-    model = pipeline("translation_en_to_ar", model=model_path)
+    model = pipeline("translation_en_to_ar", model='model')
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
     return translated
+
 
 def image_to_text(image, model):
     gray_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
