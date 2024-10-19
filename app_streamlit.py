@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG)
 from transformers import AutoModelForCausalLM
 model_name = "microsoft/DialoGPT-small"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name))
+model = AutoModelForCausalLM.from_pretrained(model_name)
 
 def get_chatbot_response(user_input):
     # Encode the input and append the end-of-sequence token
