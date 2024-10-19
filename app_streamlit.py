@@ -18,27 +18,19 @@ import json
 import requests
 import logging
 logging.basicConfig(level=logging.DEBUG)
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
-model_name='google/flan-t5-small'
-
-original_model = AutoModelForSeq2SeqLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+from transformers import AutoModelForCausalLM
+model_name = "microsoft/DialoGPT-small"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name))
 
-def chat_with_flan_t5(input_text):
-    # Prepare the input text (you can customize the prefix for specific tasks)
-    input_ids = tokenizer.encode(input_text, return_tensors="pt")
-
-    # Move input to GPU if available
-    if torch.cuda.is_available():
-        input_ids = input_ids.to('cuda')
-
-    # Generate a response from the model
-    with torch.no_grad():
-        output_ids = original_model.generate(input_ids, max_length=50, num_beams=5, early_stopping=True)
-
-    # Decode the generated response
-    response = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+def get_chatbot_response(user_input):
+    # Encode the input and append the end-of-sequence token
+    input_ids = tokenizer.encode(user_input + tokenizer.eos_token, return_tensors="pt")
+    
+    # Generate a response using the model
+    response_ids = model.generate(input_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id)
+    response = tokenizer.decode(response_ids[:, input_ids.shape[-1]:][0], skip_special_tokens=True)
+    
     return response
 
 K.clear_session()
@@ -208,7 +200,7 @@ elif option == "Chat":
     if st.button("Chat"):
         if user_input:
             try:
-                bot_response = chat_with_flan_t5(user_input)
+                bot_response = get_chatbot_response(user_input)
                 st.text(f"Bot: {bot_response}")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
