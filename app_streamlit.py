@@ -7,7 +7,6 @@ from PIL import Image
 import fitz
 import os
 from transformers import pipeline
-from tensorflow.keras.optimizers import Adam
 import torch
 import sentencepiece as spm
 from keras import backend as K
