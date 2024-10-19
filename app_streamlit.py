@@ -74,7 +74,7 @@ MODEL_NAME = "gpt-35-turbo"
 def ask_openai(prompt):
     headers = {
         "Content-Type": "application/json",
-        "api-key": AZURE_OPENAI_KEY,
+        "api-key": api_key,
     }
     
     data = {
