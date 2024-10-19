@@ -29,6 +29,7 @@ def read_pdf(file):
 def load_image_to_text_model():
     try:
         model_path = os.path.join(os.path.dirname(__file__), 'cnn_model.h5')
+        print(f"Loading model from: {model_path}")  # Debugging line
         return tf.keras.models.load_model(model_path)
     except OSError as e:
         st.error(f"Error loading model: {e}")
