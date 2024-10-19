@@ -11,7 +11,8 @@ import torch
 import sentencepiece as spm
 from dotenv import load_dotenv
 load_dotenv()
-
+from keras import backend as K
+K.clear_session()
 
 # Initialize session state for chat history if not already done
 if 'chat_history' not in st.session_state:
