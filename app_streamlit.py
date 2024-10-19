@@ -17,9 +17,6 @@ load_dotenv()
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
-tokenizer = AutoTokenizer.from_pretrained("modelchat")  # Replace with your tokenizer path
-instruct_model = AutoModelForSeq2SeqLM.from_pretrained("modelchat", torch_dtype=torch.bfloat16)
-
 def read_pdf(file):
     text = ""
     # Use BytesIO to read the uploaded file
