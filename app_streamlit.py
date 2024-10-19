@@ -26,13 +26,14 @@ def read_pdf(file):
     return text
 
 def load_image_to_text_model():
-    return tf.keras.models.load_model('cnn_model.h5')
+    print("Loading model...")
+    model = tf.keras.models.load_model('cnn_model.h5')
+    print("Model loaded successfully.")
+    return model
+
 
 def load_translation_model():
     return tf.keras.models.load_model('model')
-
-def load_translation_model():
-    return tf.keras.models.load_model('modelchat')
 
 def translate_sentence(english_sentence):
     model = pipeline("translation_en_to_ar", model='model')
