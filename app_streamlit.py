@@ -36,7 +36,7 @@ def load_translation_model():
 
 
 def translate_sentence(english_sentence):
-    model = pipeline("translation_en_to_ar", model='model')
+    model = pipeline("translation_en_to_ar", model=load_translation_model())
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
     return translated
