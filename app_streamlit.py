@@ -33,7 +33,7 @@ def read_pdf(file):
 
 def load_image_to_text_model():
     try:
-        return tf.keras.models.load_model('cnn_model.h5', compile=False)
+        return tf.keras.models.load_model('cnn_model.h5')
     except Exception as e:
         st.error(f"Failed to load model: {str(e)}")
         return None
@@ -166,7 +166,7 @@ def extract(image):
     return ''.join(chars)
 
 image_to_text_model = load_image_to_text_model()
-image_to_text_model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
+# image_to_text_model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 # Streamlit interface
 st.title("Multimodal Translation and Chatbot App")
 
