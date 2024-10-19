@@ -6,12 +6,12 @@ PyPDF2
 altair
 setuptools
 transformers
-tensorflow==2.16.2
+tensorflow==2.12.0
+keras==2.12.0
 torch>=2.2.0
 numpy
 PyMuPDF==1.24.0
 sentencepiece
-keras>=3.0.0
 tf-keras
 python-dotenv
 Pillow
