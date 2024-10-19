@@ -26,7 +26,7 @@ def read_pdf(file):
             text += page.get_text()
     return text
 
-def loadimageto_text_model():
+def load_image_to_text_model():
     try:
         model_path = os.path.join(os.path.dirname(__file), 'cnn_model.h5')
         return tf.keras.models.load_model(model_path)
