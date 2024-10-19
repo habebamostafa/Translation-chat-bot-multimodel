@@ -6,7 +6,6 @@ import tensorflow as tf
 from PIL import Image
 import fitz
 import os
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
 from tensorflow.keras.optimizers import Adam
 import torch
@@ -16,7 +15,7 @@ import json
 import requests
 import logging
 logging.basicConfig(level=logging.DEBUG)
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM,AutoTokenizer
 model_name = "microsoft/DialoGPT-small"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
