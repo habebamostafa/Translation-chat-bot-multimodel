@@ -25,11 +25,11 @@ def read_pdf(file):
             text += page.get_text()
     return text
 
-def load_image_to_text_model():
-    print("Loading model...")
-    model = tf.keras.models.load_model('cnn_model.h5')
-    print("Model loaded successfully.")
-    return model
+# def load_image_to_text_model():
+#     print("Loading model...")
+#     model = tf.keras.models.load_model('cnn_model.h5')
+#     print("Model loaded successfully.")
+#     return model
 
 
 def load_translation_model():
@@ -157,7 +157,7 @@ def extract(image):
 
     return ''.join(chars)
 
-image_to_text_model = load_image_to_text_model()
+# image_to_text_model = load_image_to_text_model()
 
 # Streamlit interface
 st.title("Multimodal Translation and Chatbot App")
@@ -181,27 +181,27 @@ elif option == "Chat":
             except Exception as e:
                 st.error(f"Error: {str(e)}")
 
-elif option == "Image to Text":
-    upload_option = st.radio("Choose Input Method", ("Try Sample Image","Upload Image"))
+# elif option == "Image to Text":
+#     upload_option = st.radio("Choose Input Method", ("Try Sample Image","Upload Image"))
 
-    if upload_option == "Upload Image":
-        uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file)
-            st.image(image, caption="Uploaded Image", use_column_width=True)
+#     if upload_option == "Upload Image":
+#         uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
+#         if uploaded_file is not None:
+#             image = Image.open(uploaded_file)
+#             st.image(image, caption="Uploaded Image", use_column_width=True)
 
-            if st.button("Extract Text"):
-                extracted_text = extract(image)
-                st.write("Extracted Text: ", extracted_text)
+#             if st.button("Extract Text"):
+#                 extracted_text = extract(image)
+#                 st.write("Extracted Text: ", extracted_text)
 
-    elif upload_option == "Try Sample Image":
-        selected_image = st.selectbox("Select a sample image", list(predefined_images.keys()))
-        image_path = predefined_images[selected_image]
-        image = Image.open(image_path)
-        st.image(image, caption="Sample Image", use_column_width=True)
-        if st.button("Extract Text"):
-            extracted_text = extract(image)
-            st.write("Extracted Text:", extracted_text)
+#     elif upload_option == "Try Sample Image":
+#         selected_image = st.selectbox("Select a sample image", list(predefined_images.keys()))
+#         image_path = predefined_images[selected_image]
+#         image = Image.open(image_path)
+#         st.image(image, caption="Sample Image", use_column_width=True)
+#         if st.button("Extract Text"):
+#             extracted_text = extract(image)
+#             st.write("Extracted Text:", extracted_text)
 
 elif option == "PDF Translation":
     pdf_file = st.file_uploader("Upload a PDF file", type=["pdf"])
