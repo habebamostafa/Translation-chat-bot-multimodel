@@ -15,8 +15,8 @@ from keras import backend as K
 K.clear_session()
 
 # Initialize session state for chat history if not already done
-if 'chat_history' not in st.session_state:
-    st.session_state.chat_history = []
+# if 'chat_history' not in st.session_state:
+#     st.session_state.chat_history = []
 
 def read_pdf(file):
     text = ""
@@ -29,11 +29,17 @@ def read_pdf(file):
 def load_image_to_text_model():
     try:
         model_path = os.path.join(os.path.dirname(__file__), 'cnn_model.h5')
-        print(f"Loading model from: {model_path}")  # Debugging line
-        return tf.keras.models.load_model(model_path)
+        model = tf.keras.models.load_model(model_path)
+        if model is None:
+            raise ValueError("Loaded model is None")
+        return model
     except OSError as e:
         st.error(f"Error loading model: {e}")
         return None
+    except ValueError as ve:
+        st.error(f"Error: {ve}")
+        return None
+
 
 
 def load_translation_model():
