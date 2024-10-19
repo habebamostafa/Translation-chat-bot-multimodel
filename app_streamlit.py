@@ -8,6 +8,7 @@ import fitz
 import os
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, GenerationConfig
 from transformers import pipeline
+from tensorflow.keras.optimizers import Adam
 import torch
 import sentencepiece as spm
 from dotenv import load_dotenv
