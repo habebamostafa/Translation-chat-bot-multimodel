@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from keras import backend as K
 import json
+import requests
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
