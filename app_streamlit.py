@@ -27,7 +27,7 @@ def read_pdf(file):
     return text
 
 def load_image_to_text_model():
-    return torch.load()('cnn_model.h5')
+    return torch.load('cnn_model.h5')
 
 def load_translation_model():
     return tf.keras.models.load_model('model')
