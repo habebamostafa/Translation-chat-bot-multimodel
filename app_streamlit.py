@@ -26,11 +26,13 @@ def read_pdf(file):
             text += page.get_text()
     return text
 
-def load_image_to_text_model():
-    print("Loading model...")
-    model = tf.keras.models.load_model('cnn_model.h5')
-    print("Model loaded successfully.")
-    return model
+def loadimageto_text_model():
+    try:
+        model_path = os.path.join(os.path.dirname(__file), 'cnn_model.h5')
+        return tf.keras.models.load_model(model_path)
+    except OSError as e:
+        st.error(f"Error loading model: {e}")
+        return None
 
 
 def load_translation_model():
