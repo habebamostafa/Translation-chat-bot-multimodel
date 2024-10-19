@@ -12,8 +12,6 @@ import sentencepiece as spm
 from dotenv import load_dotenv
 load_dotenv()
 from keras import backend as K
-from your_custom_layers import CustomLayer
-
 K.clear_session()
 
 # Initialize session state for chat history if not already done
@@ -38,7 +36,7 @@ def load_image_to_text_model():
 
 
 def load_translation_model():
-    return tf.keras.models.load_model('model', custom_objects={'CustomLayer': CustomLayer})
+    return tf.keras.models.load_model('model')
 
 
 def translate_sentence(english_sentence):
