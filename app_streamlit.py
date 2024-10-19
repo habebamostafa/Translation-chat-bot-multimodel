@@ -40,7 +40,7 @@ def load_translation_model():
 
 
 def translate_sentence(english_sentence):
-    model_path = os.path.join(os.path.dirname(_file_), 'model')
+    model_path = os.path.join(os.path.dirname(__file__), 'model')
     model = pipeline("translation_en_to_ar", model=model_path)
     translate_sentence = model(english_sentence)
     translated = translate_sentence[0]['translation_text']
