@@ -12,6 +12,8 @@ import sentencepiece as spm
 from dotenv import load_dotenv
 load_dotenv()
 from keras import backend as K
+from your_custom_layers import CustomLayer
+
 K.clear_session()
 
 # Initialize session state for chat history if not already done
@@ -29,14 +31,14 @@ def read_pdf(file):
 def load_image_to_text_model():
     try:
         model_path = os.path.join(os.path.dirname(__file__), 'cnn_model.h5')
-        return tf.keras.models.load_model(model_path)
+        return tf.keras.models.load_model(model_path, custom_objects={'CustomLayer': CustomLayer})
     except OSError as e:
         st.error(f"Error loading model: {e}")
         return None
 
 
 def load_translation_model():
-    return tf.keras.models.load_model('model')
+    return tf.keras.models.load_model('model', custom_objects={'CustomLayer': CustomLayer})
 
 
 def translate_sentence(english_sentence):
