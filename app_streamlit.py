@@ -4,14 +4,14 @@ import numpy as np
 from tensorflow import keras
 import tensorflow as tf
 from PIL import Image
-import fitz
-import os
+import fitz  # PyMuPDF
 from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 import torch
 from keras import backend as K
 import json
 import requests
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
 # Global Variables
