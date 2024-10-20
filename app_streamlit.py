@@ -63,7 +63,7 @@ def load_translation_model():
     global translation_model
     if translation_model is None:
         try:
-            translation_model = pipeline("translation_en_to_ar", model='model')
+            translation_model = pipeline("translation_en_to_ar", model='Helsinki-NLP/opus-mt-en-ar')
             st.success("Translation model loaded successfully.")
         except Exception as e:
             st.error(f"Failed to load the translation model: {str(e)}")
