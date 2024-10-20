@@ -86,6 +86,8 @@ def image_to_text(image):
         st.error(f"Error in image-to-text conversion: {str(e)}")
         return None
 
+mapping_inverse = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F', 16: 'G', 17: 'H', 18: 'I', 19: 'J', 20: 'K', 21: 'L', 22: 'M', 23: 'N', 24: 'O', 25: 'P', 26: 'Q', 27: 'R', 28: 'S', 29: 'T', 30: 'U', 31: 'V', 32: 'W', 33: 'X', 34: 'Y', 35: 'Z', 36: 'a', 37: 'b', 38: 'c', 39: 'd', 40: 'e', 41: 'f', 42: 'g', 43: 'h', 44: 'i', 45: 'j', 46: 'k', 47: 'l', 48: 'm', 49: 'n', 50: 'o', 51: 'p', 52: 'q', 53: 'r', 54: 's', 55: 't', 56: 'u', 57: 'v', 58: 'w', 59: 'x', 60: 'y', 61: 'z'}
+
 # Function for Text Translation
 def translate_sentence(english_sentence):
     model = load_translation_model()
@@ -97,6 +99,72 @@ def translate_sentence(english_sentence):
     except Exception as e:
         st.error(f"Error in translation: {str(e)}")
         return None
+def convert_2_gray(image):
+    image_np = np.array(image)
+    if len(image_np.shape) < 2:
+        raise ValueError("Input image is not valid. It should have at least 2 dimensions.")
+
+    if len(image_np.shape) == 3:
+        if image_np.shape[2] == 4:
+            image_np = cv2.cvtColor(image_np, cv2.COLOR_RGBA2RGB)
+        gray_image = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+    elif len(image_np.shape) == 2:
+        gray_image = image_np
+    else:
+        raise ValueError("Unexpected image format.")
+
+    return gray_image
+
+def binarization(image):
+    _, thresh = cv2.threshold(image, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+    return thresh
+
+def dilate(image, words=False):
+    m, n = 3, 1
+    if words:
+        m = n = 6
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (n, m))
+    return cv2.dilate(image, rect_kernel, iterations=3)
+
+def find_rect(image):
+    contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    rects = [cv2.boundingRect(cnt) for cnt in contours]
+    return sorted(rects, key=lambda x: x[0])
+
+def extract(image):
+    model = load_image_to_text_model()  # Load the image-to-text model
+    chars = []
+    image_cpy = convert_2_gray(image)
+    bin_img = binarization(image_cpy)
+    full_dil_img = dilate(bin_img, words=True)
+    words = find_rect(full_dil_img)
+
+    prev_x_end = 0
+    for word in words:
+        x, y, w, h = word
+        img = image_cpy[y:y + h, x:x + w]
+        if x - prev_x_end > 20:
+            chars.append(' ')
+        prev_x_end = x + w
+
+        bin_img = binarization(convert_2_gray(img))
+        dil_img = dilate(bin_img)
+        char_parts = find_rect(dil_img)
+
+        for char in char_parts:
+            cx, cy, cw, ch = char
+            ch_img = img[cy:cy + ch, cx:cx + cw]
+            empty_img = np.full((32, 32, 1), 255, dtype=np.uint8)
+            resized = cv2.resize(ch_img, (16, 22), interpolation=cv2.INTER_CUBIC)
+            gray = convert_2_gray(resized)
+            empty_img[3:3 + 22, 3:3 + 16, 0] = gray
+
+            gray_rgb = cv2.cvtColor(empty_img, cv2.COLOR_GRAY2RGB).astype(np.float32) / 255.0
+            prediction = model.predict(np.array([gray_rgb]), verbose=0)
+            predicted_char = mapping_inverse[np.argmax(prediction)]
+            chars.append(predicted_char)
+
+    return ''.join(chars)
 
 # Streamlit UI
 st.title("Multimodal Translation and Chatbot App")
@@ -134,7 +202,7 @@ elif option == "Image to Text":
             st.image(image, caption="Uploaded Image", use_column_width=True)
 
             if st.button("Extract Text"):
-                extracted_text = image_to_text(image)
+                extracted_text = extract(image)
                 st.write("Extracted Text:", extracted_text)
 
     elif upload_option == "Try Sample Image":
@@ -143,7 +211,7 @@ elif option == "Image to Text":
         image = Image.open(image_path)
         st.image(image, caption="Sample Image", use_column_width=True)
         if st.button("Extract Text"):
-            extracted_text = image_to_text(image)
+            extracted_text = extract(image)
             st.write("Extracted Text:", extracted_text)
 
 elif option == "PDF Translation":
