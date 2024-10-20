@@ -1,1 +1,2 @@
+model/config.json filter=lfs diff=lfs merge=lfs -text
 .env
