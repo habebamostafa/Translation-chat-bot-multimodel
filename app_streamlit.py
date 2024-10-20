@@ -58,11 +58,12 @@ def load_image_to_text_model():
     return image_to_text_model
 
 # Load Translation Model
+# Helsinki-NLP/opus-mt-en-ar
 def load_translation_model():
     global translation_model
     if translation_model is None:
         try:
-            translation_model = pipeline("translation_en_to_ar", model='Helsinki-NLP/opus-mt-en-ar')
+            translation_model = pipeline("translation_en_to_ar", model='model')
             st.success("Translation model loaded successfully.")
         except Exception as e:
             st.error(f"Failed to load the translation model: {str(e)}")
